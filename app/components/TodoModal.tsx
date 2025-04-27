@@ -2,6 +2,8 @@
 
 import { Todo } from '@/types/todos';
 import React, { useState } from 'react';
+import CommentSection from './CommentSection';
+import { Comments } from '@/types/comment';
 
 type TodoModalProos = {
 	todo: Todo | null;
@@ -13,6 +15,7 @@ const TodoModal = ({ todo, closeModal }: TodoModalProos) => {
 	const [title, setTitle] = useState(todo?.title ?? '');
 	const [description, setDescription] = useState(todo?.description ?? '');
 	const [status, setStatus] = useState<'complete' | 'incomplete'>('incomplete');
+	const [comments, setComments] = useState<Comments[]>([]);
 
 	// TODOの編集保存処理
 	const handleSave = () => {
@@ -24,6 +27,11 @@ const TodoModal = ({ todo, closeModal }: TodoModalProos) => {
 	const handleDelete = () => {
 		console.log('削除');
 		closeModal();
+	};
+
+	const addComment = (text: string) => {
+		const newComment = { id: comments.length + 1, text };
+		setComments([...comments, newComment]);
 	};
 
 	return (
@@ -94,6 +102,7 @@ const TodoModal = ({ todo, closeModal }: TodoModalProos) => {
 						</div>
 					</div>
 				)}
+				<CommentSection comments={comments} addComment={addComment} />
 				<button
 					onClick={closeModal}
 					className="mt-4 text-blue-500 hover:text-blue-700 text-sm font-semibold"
