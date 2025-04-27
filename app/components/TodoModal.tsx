@@ -14,7 +14,9 @@ const TodoModal = ({ todo, closeModal }: TodoModalProos) => {
 	const [isEditing, setIsEditing] = useState(false);
 	const [title, setTitle] = useState(todo?.title ?? '');
 	const [description, setDescription] = useState(todo?.description ?? '');
-	const [status, setStatus] = useState<'complete' | 'incomplete'>('incomplete');
+	const [status, setStatus] = useState<'complete' | 'inprogress' | 'incomplete'>(
+		todo?.status ?? 'incomplete'
+	);
 	const [comments, setComments] = useState<Comments[]>([]);
 
 	// TODOの編集保存処理
@@ -30,7 +32,7 @@ const TodoModal = ({ todo, closeModal }: TodoModalProos) => {
 	};
 
 	const addComment = (text: string) => {
-		const newComment = { id: comments.length + 1, text };
+		const newComment = { id: comments.length + 1, todo_id: todo?.id, text };
 		setComments([...comments, newComment]);
 	};
 
@@ -81,10 +83,14 @@ const TodoModal = ({ todo, closeModal }: TodoModalProos) => {
 						<p className="text-lg text-gray-700">{description}</p>
 						<span
 							className={`inline-block rounded-full px-4 py-1 text-sm font-semibold ${
-								status === 'complete' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'
+								status === 'complete'
+									? 'bg-green-100 text-green-800'
+									: status === 'incomplete'
+									? 'bg-red-100 text-red-800'
+									: 'bg-blue-100 text-blue-800'
 							}`}
 						>
-							{status === 'complete' ? '完了' : '未完了'}
+							{status === 'complete' ? '完了' : status === 'incomplete' ? '未完了' : '進行中'}
 						</span>
 						<div className="flex gap-4 pt-6">
 							<button

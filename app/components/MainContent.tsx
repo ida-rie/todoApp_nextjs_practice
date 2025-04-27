@@ -5,8 +5,8 @@ import TodoModal from './TodoModal';
 import CreateTodo from './CreateTodo';
 
 type MainContentProps = {
-	selectedMenu: 'all' | 'incomplete' | 'complete' | 'create';
-	onSelectedMenu: (menu: 'all' | 'incomplete' | 'complete' | 'create') => void;
+	selectedMenu: 'all' | 'incomplete' | 'inprogress' | 'complete' | 'create';
+	onSelectedMenu: (menu: 'all' | 'incomplete' | 'inprogress' | 'complete' | 'create') => void;
 };
 
 // descriptionを指定文字数で省略する関数
@@ -17,22 +17,28 @@ const truncateText = (text: string, maxLength: number) => {
 // 仮のデータ
 export const todos: Todo[] = [
 	{
-		id: '1',
+		id: 1,
 		title: 'TypeScriptの勉強',
 		description: '型の勉強を進める',
 		status: 'incomplete',
 	},
 	{
-		id: '2',
+		id: 2,
 		title: 'Next.jsでアプリ作成',
 		description: 'App Routerを使って練習する',
 		status: 'incomplete',
 	},
 	{
-		id: '3',
+		id: 3,
 		title: 'TailwindCSSを学習',
 		description: 'ユーティリティクラスを理解する',
 		status: 'complete',
+	},
+	{
+		id: 4,
+		title: 'ステータス進行中を追加',
+		description: 'supabaseの学習を進める',
+		status: 'inprogress',
 	},
 ];
 
@@ -65,7 +71,9 @@ const MainContent = ({ selectedMenu, onSelectedMenu }: MainContentProps) => {
 						const statusColor =
 							todo.status === 'complete'
 								? 'bg-green-100 text-green-800'
-								: 'bg-red-100 text-red-800';
+								: todo.status === 'incomplete'
+								? 'bg-red-100 text-red-800'
+								: 'bg-blue-100 text-blue-800';
 
 						return (
 							<li
@@ -79,7 +87,11 @@ const MainContent = ({ selectedMenu, onSelectedMenu }: MainContentProps) => {
 									<span
 										className={`mt-2 inline-block rounded-full px-2 py-0.5 text-xs font-semibold ${statusColor}`}
 									>
-										{todo.status === 'complete' ? '完了' : '未完了'}
+										{todo.status === 'complete'
+											? '完了'
+											: todo.status === 'incomplete'
+											? '未完了'
+											: '進行中'}
 									</span>
 								</div>
 							</li>

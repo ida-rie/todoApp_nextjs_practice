@@ -4,7 +4,7 @@ import Header from './components/Header';
 import MainContent from './components/MainContent';
 import Sidebar from './components/Sidebar';
 
-type MenuType = 'all' | 'incomplete' | 'complete' | 'create';
+type MenuType = 'all' | 'incomplete' | 'inprogress' | 'complete' | 'create';
 
 export default function Home() {
 	const [selectedMenu, setSelectedMenu] = useState<MenuType>('all');

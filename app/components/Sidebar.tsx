@@ -1,8 +1,8 @@
 import React from 'react';
 
 type SidebarProps = {
-	selectedMenu: 'all' | 'incomplete' | 'complete' | 'create';
-	onSelectedMenu: (menu: 'all' | 'incomplete' | 'complete' | 'create') => void;
+	selectedMenu: 'all' | 'incomplete' | 'inprogress' | 'complete' | 'create';
+	onSelectedMenu: (menu: 'all' | 'incomplete' | 'inprogress' | 'complete' | 'create') => void;
 };
 
 const Sidebar = ({ selectedMenu, onSelectedMenu }: SidebarProps) => {
@@ -25,6 +25,14 @@ const Sidebar = ({ selectedMenu, onSelectedMenu }: SidebarProps) => {
 					onClick={() => onSelectedMenu('incomplete')}
 				>
 					未完了一覧
+				</button>
+				<button
+					className={`text-left hover:text-blue-500 ${
+						selectedMenu === 'inprogress' ? 'font-bold text-blue-500' : ''
+					}`}
+					onClick={() => onSelectedMenu('inprogress')}
+				>
+					進行中一覧
 				</button>
 				<button
 					className={`text-left hover:text-blue-500 ${
