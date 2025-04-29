@@ -1,47 +1,61 @@
 'use client';
-import React, { useState } from 'react';
+import React from 'react';
+import { z } from 'zod';
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { addTodo } from '@/lib/api/todos';
 
-type HCreateTodoProps = {
+// バリデーションスキーマ
+const createTodoSchema = z.object({
+	title: z.string().min(1, 'タイトルは入力必須です').max(255, '255文字以内で入力してください'),
+	description: z.string().nullable().optional(),
+});
+
+type createTodoFormData = z.infer<typeof createTodoSchema>;
+
+type CreateTodoProps = {
 	onSelectedMenu: (menu: 'all' | 'incomplete' | 'complete' | 'create') => void;
+	handleTodoAdded: () => void;
 };
 
-const CreateTodo = ({ onSelectedMenu }: HCreateTodoProps) => {
-	const [title, setTitle] = useState('');
-	const [description, setDescription] = useState('');
-	const [status, setStatus] = useState<'complete' | 'incomplete'>('incomplete');
+const CreateTodo = ({ onSelectedMenu, handleTodoAdded }: CreateTodoProps) => {
+	const {
+		register,
+		handleSubmit,
+		reset,
+		formState: { errors },
+	} = useForm<createTodoFormData>({ resolver: zodResolver(createTodoSchema) });
 
 	// TODOの作成処理
-	const handleSubmit = (e: React.FormEvent) => {
-		e.preventDefault();
-		setTitle('');
-		setDescription('');
-		setStatus('incomplete');
+	const onSubmit = async (data: createTodoFormData) => {
+		try {
+			await addTodo(data.title, data.description as string);
+			alert('TODOを追加しました');
+			handleTodoAdded();
+		} catch (error) {
+			console.error('TODOの追加に失敗：', error);
+			alert('TODOの追加を失敗しました');
+		} finally {
+			reset();
+			onSelectedMenu('all');
+		}
 	};
 
 	return (
 		<div className="p-6 max-w-lg max-auto">
-			<form onSubmit={handleSubmit} className="space-y-4">
+			<form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
 				<input
+					{...register('title')}
 					type="text"
 					className="w-full rounded-md border p-3 text-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-					value={title}
-					onChange={(e) => setTitle(e.target.value)}
 					placeholder="タイトル"
 				/>
+				{errors.title && <p className="text-red-500">{errors.title.message}</p>}
 				<textarea
+					{...register('description')}
 					className="w-full rounded-md border p-3 text-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-					value={description}
-					onChange={(e) => setDescription(e.target.value)}
 					placeholder="詳細"
 				/>
-				<select
-					className="w-full rounded-md border p-3 text-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-					value={status}
-					onChange={(e) => setStatus(e.target.value as 'complete' | 'incomplete')}
-				>
-					<option value="incomplete">未完了</option>
-					<option value="complete">完了</option>
-				</select>
 				<div className="flex gap-4 mt-6">
 					<button
 						type="submit"
